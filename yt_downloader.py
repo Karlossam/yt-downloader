@@ -3,29 +3,16 @@
 #Importar librerias necesarias: yt_dl para descargar, sys para los argumentos.
 import youtube_dl
 import argparse
-import platform
 import os
-from pathlib import Path
 
 #Esta función mediante varios truquis te acaba creando y devolviendo una carpeta 'yt_downloads' dentro de descargas
 def check_dir():
-    if platform.system() == 'Linux':
         user = os.environ['HOME']
         ruta = user + '/Downloads/'
         down_fin = os.path.dirname(ruta + 'yt_downloads/')
         if not os.path.exists(down_fin):
             os.mkdir(down_fin)
         return down_fin
-
-    elif platform.system() == 'Windows':
-        user = os.getlogin()
-        ruta = Path('C:/Users/' + user + '/ytDownloads/')
-        print(ruta)
-        #down_fin = os.path.dirname(ruta)
-        #print(down_fin)
-        if not os.path.exists(ruta):
-            os.mkdir(ruta)
-        return ruta
 
 
 def main():
@@ -41,13 +28,15 @@ def main():
 
     if args.genero == None:
         args.genero = ''
+    else:
+        args.genero = '-' + args.genero
 
     downs_dir = str(check_dir())
-    
+
     #Descargar el audio/video
     if args.audio:
         ydl_opts = {
-            'outtmpl': downs_dir + '/%(title)s-' + args.genero +'.%(ext)s',
+            'outtmpl': downs_dir + '/%(title)s' + args.genero +'.%(ext)s',
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
@@ -56,7 +45,7 @@ def main():
             }
     else:
         ydl_opts = {
-            'outtmpl': downs_dir + '\%(title)s_' + args.genero +'.%(ext)s',
+            'outtmpl': downs_dir + '\%(title)s' + args.genero +'.%(ext)s',
         }
 
     #Descargar el archivo
